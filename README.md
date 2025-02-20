@@ -1,2 +1,2 @@
-# beloved-net
-The official repository of the Beloved By God Network.
+# Beloved-Net
+This is the official repository of the Beloved By God Network.
