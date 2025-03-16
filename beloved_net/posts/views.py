@@ -16,9 +16,15 @@ class TeachingListAPIView(generics.ListCreateAPIView):
     search_fields = ['=title', 'description']
     ordering_fields = ['pk', 'date']    
 
+    def get_permissions(self):
+        self.permission_classes = [permissions.AllowAny]
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            self.permission_classes = [permissions.IsAdminUser]
+        return super().get_permissions()
+
     
 class TeachingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Teaching.objects.all()
+    queryset = Teaching.objects.order_by('seriespart__position')
     serializer_class = TeachingSerializer
     lookup_url_kwarg = 'teaching_id'
 
@@ -26,7 +32,31 @@ class TeachingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         self.permission_classes = [permissions.AllowAny]
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
             self.permission_classes = [permissions.IsAdminUser]
-        return super().get_permissions()    
+        return super().get_permissions()
+    
+class SeriesListAPIView(generics.ListCreateAPIView):
+    queryset = Series.objects.order_by('pk')
+    serializer_class = SeriesSerializer
+
+    search_fields = ['=title', 'description']
+    ordering_fields = ['pk', 'date']  
+
+    def get_permissions(self):
+        self.permission_classes = [permissions.AllowAny]
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            self.permission_classes = [permissions.IsAdminUser]
+        return super().get_permissions()
+
+class SeriesDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Series.objects.all()
+    serializer_class = SeriesDetailSerializer
+    lookup_url_kwarg = 'series_id'
+
+    def get_permissions(self):
+        self.permission_classes = [permissions.AllowAny]
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            self.permission_classes = [permissions.IsAdminUser]
+        return super().get_permissions()
 
 def teachings(request):
     return render(request, 'posts/teachings/teachings.html', {'teachings': Teaching.objects.all()})
